@@ -1,4 +1,4 @@
-//ÏßĞÔ±íµÄÁ´Ê½±íÊ¾ºÍÊµÏÖ
+//çº¿æ€§è¡¨çš„é“¾å¼è¡¨ç¤ºå’Œå®ç°
 #include <iostream>
 
 using namespace std;
@@ -10,129 +10,169 @@ typedef int Status;
 typedef double ElemType;
 
 typedef struct LNode{
-	ElemType data;
-	struct Lnode *next;
-	
+    ElemType data;
+    struct LNode *next;
+    
 }*LinkList;
 
 /*
-ĞèÒªÊµÏÖµÄ¹¦ÄÜ
-1.´´½¨ 
-2.»ñÈ¡µÚi¸öÔªËØ 
-3.²åÈëÔªËØ
-4.É¾³ıÔªËØ 
-5.ºÏ²¢±í 
+éœ€è¦å®ç°çš„åŠŸèƒ½
+1.åˆ›å»º 
+2.è·å–ç¬¬iä¸ªå…ƒç´  
+3.æ’å…¥å…ƒç´ 
+4.åˆ é™¤å…ƒç´  
+5.åˆå¹¶è¡¨ 
 */
 
-//³õÊ¼»¯ ´Ó±íÎ²µ½±íÍ·ÄæÏò½¨Á¢Ò»¸öÊı¾İ¸öÊıÎªn¸öµÄµ¥Á´±í
+//åˆå§‹åŒ– ä»è¡¨å°¾åˆ°è¡¨å¤´é€†å‘å»ºç«‹ä¸€ä¸ªæ•°æ®ä¸ªæ•°ä¸ºnä¸ªçš„å•é“¾è¡¨
 void CreastList(LinkList &L,int n){
-	L = (LinkList)malloc(sizeof(LNode));
-	L->next= null;             //´øÍ·½ÚµãµÄµ¥Á´±í 
-	for(int i = n; i>0; i--){
-		p = (LinkList)malloc(sizeof(LNode));
-		cin>>(&p->data);
-		
-		//²åÈëµ½±íÍ· 
-		p->next = L->next;
-		L->next= p;
-	}	
+    LinkList p;
+    L = (LinkList)malloc(sizeof(LNode));
+   
+    L->next= NULL;             //å¸¦å¤´èŠ‚ç‚¹çš„å•é“¾è¡¨ 
+    for(int i = n; i>0; i--){
+        p = (LinkList)malloc(sizeof(LNode));
+        cin>>p->data;
+        p->next= L->next;
+        L->next= p;
+        
+    }   
 } 
 
-/*»ñÈ¡µÚi¸öÔªËØ Status GetElem(LinkList &L ,int i,ElemType &e)
-						 LÎª´øÍ·½ÚµãµÄµ¥Á´±íÍ·Ö¸Õë
-						 µ±µÚi¸öÔªËØ´æÔÚµÄÊ±ºò£¬ÆäÖµ¸³¸øe 
+/*è·å–ç¬¬iä¸ªå…ƒç´  Status GetElem(LinkList &L ,int i,ElemType &e)
+                         Lä¸ºå¸¦å¤´èŠ‚ç‚¹çš„å•é“¾è¡¨å¤´æŒ‡é’ˆ
+                         å½“ç¬¬iä¸ªå…ƒç´ å­˜åœ¨çš„æ—¶å€™ï¼Œå…¶å€¼èµ‹ç»™e 
 */ 
 Status GetElem(LinkList &L ,int i,ElemType &e)
 {
-	LinkList p;
-	p = L->next;
-	
-	int j=1;
-	
-	while(p && j<i){
-		p = p->next; j++;
-	}
-	if(!p || j>i)  return ERROR;
-	e = p->data;
-	return OK;
-	
+    LinkList p;
+    p = L->next;
+    
+    int j=1;
+    
+    while(p && j<i){
+        p = p->next; j++;
+    }
+    if(!p || j>i)  return ERROR;
+    e = p->data;
+    return OK;
+    
 } 
 
 /*
-ÔÚµ¥Á´±íÖĞ²åÈëÒ»¸ö½Úµã 
-ÔÚµÚi¸öÎ»ÖÃÖ®Ç°²åÈëÒ»¸öÔªËØe
+åœ¨å•é“¾è¡¨ä¸­æ’å…¥ä¸€ä¸ªèŠ‚ç‚¹ 
+åœ¨ç¬¬iä¸ªä½ç½®ä¹‹å‰æ’å…¥ä¸€ä¸ªå…ƒç´ e
  Status ListInsert(LinkList &L, int i,ElemType e) 
 */ 
 Status ListInsert(LinkList &L, int i,ElemType e) 
 {
-	LinkList p,q;
-	p = L->next;
-	int j = 1;
-	while(p && j<i-1)
-	{
-		p = p->next;j++;
-	}
-	if(!p || j>i-1) return ERROR;
-	q->data= e;
-	q->next = p->next;
-	p-next = p;
-	return OK;
+    LinkList p,q;
+    q = (LinkList)malloc(sizeof(LNode));
+    p = L->next;
+    int j = 1;
+
+    while(p && j<i-1)
+    {
+        p = p->next;j++;
+    }
+    if(!p || j>i-1) return ERROR;
+    q->data= e;
+    q->next = p->next;
+    p->next = q;
+    return OK;
 } 
 
 /*
-ÔÚµ¥Á´±íÖĞ³ıÈ¥Ò»¸ö½Úµã
-ÔÚ´øÍ·½ÚµãµÄµ¥Á´±íLÖĞ£¬É¾³ıµÚi¸öÔªËØ£¬²¢ÓÉe·µ»ØËüµÄÖµ
+åœ¨å•é“¾è¡¨ä¸­é™¤å»ä¸€ä¸ªèŠ‚ç‚¹
+åœ¨å¸¦å¤´èŠ‚ç‚¹çš„å•é“¾è¡¨Lä¸­ï¼Œåˆ é™¤ç¬¬iä¸ªå…ƒç´ ï¼Œå¹¶ç”±eè¿”å›å®ƒçš„å€¼
 Status ListDelete(LinkList &L,int i,ElemType &e) 
 */
 Status ListDelete(LinkList &L,int i,ElemType &e)
 {
-	LinkList p,q;
-	p = L->next;
-	int j =1;
-	while(p && j<i-1)
-	{
-		p = p->next;
-		j++;
-	}
-	if(!p || j > i-1)  return ERROR;
-  	q = p->next;
-  	e = q->data;
-  	p->next = q->next;
-  	free(q);
-  	return OK;
+    LinkList p,q;
+    p = L->next;
+    int j =1;
+    while(p && j<i-1)
+    {
+        p = p->next;
+        j++;
+    }
+    if(!p || j > i-1)  return ERROR;
+    q = p->next;
+    e = q->data;
+    p->next = q->next;
+    free(q);
+    return OK;
 }
 
 /*
-ºÏ²¢Á½¸öµ¥Á´±í
-ÒÑÖªÁ½¸öÏßĞÔµ¥Á´±íLaºÍLbµÄÔªËØ°´Öµ·Çµİ¼õÅÅÁĞ
-¹é²¢LaºÍLbµÃµ½ĞÂµÄ·Çµİ¼õµ¥Á´±í
+åˆå¹¶ä¸¤ä¸ªå•é“¾è¡¨
+å·²çŸ¥ä¸¤ä¸ªçº¿æ€§å•é“¾è¡¨Laå’ŒLbçš„å…ƒç´ æŒ‰å€¼éé€’å‡æ’åˆ—
+å½’å¹¶Laå’ŒLbå¾—åˆ°æ–°çš„éé€’å‡å•é“¾è¡¨
 LinkList ListCombine(LinkList &La,LinkList &Lb); 
 */
 LinkList ListCombine(LinkList &La,LinkList &Lb)
 {
-	LinkList Lc,pa,pb,pc;
- 	pa = La->next;
- 	pb = Lb->next;
- 	Lc = pc = La; 
- 	while(pa && pb){
-	 	if(pa->data <pb->data)
-	 	{
-			pc->next = pa; pc = pa; pa=pa->next;	 
-	 	}
-	 	else{
-	 		pc->next = pb; pc = pb; pb = pb->next;
-	 	}
-	 }
-	 pc->next = pa?pa:pb;
-	 
-	 free(Lb);
-	 return Lc;
+    LinkList Lc,pa,pb,pc;
+    pa = La->next;
+    pb = Lb->next;
+    Lc = pc = La; 
+    while(pa && pb){
+        if(pa->data <pb->data)
+        {
+            pc->next = pa; pc = pa; pa=pa->next;     
+        }
+        else{
+            pc->next = pb; pc = pb; pb = pb->next;
+        }
+     }
+     pc->next = pa?pa:pb;
+     
+     free(Lb);
+     return Lc;
 } 
+void showList(LinkList &L)
+{
+    LinkList p;
+    p = L->next;
+    cout<<"[ ";
+    while(p ) {cout<<p->data<<" ";
+    p=p->next;}
+    cout<<"]";
+}
+int main()
+{
+    LinkList L1,L2;
+    ElemType e,delet;
+    cout<<"è¯·å€’å™è¾“å…¥é“¾è¡¨1çš„æ•°æ®ï¼š"<<endl;
+    CreastList(L1,4);
+    
+    cout<<"è¯·å€’å™è¾“å…¥é“¾è¡¨2çš„æ•°æ®ï¼š"<<endl;
+    CreastList(L2,3);
 
+     cout<<"é“¾è¡¨1çš„æ•°æ®åŸŸä¸ºï¼š";
+    showList(L1);cout<<endl;
+     cout<<"é“¾è¡¨2çš„æ•°æ®åŸŸä¸ºï¼š";
+    showList(L2);cout<<endl;
+    
+   ListDelete(L1,3,delet);
+    cout<<"åˆ é™¤é“¾è¡¨1çš„ç¬¬3ä¸ªå…ƒç´ åæ•°æ®åŸŸä¸ºï¼š";
+    showList(L1);cout<<endl;
+    GetElem(L1,2,e);
+    cout<<"L1çš„ç¬¬2ä¸ªå…ƒç´ eä¸ºï¼š"<<e<<endl;
 
+    //å°†eæ’å…¥åˆ°é“¾è¡¨2çš„ç¬¬ä¸‰ä¸ªå…ƒç´ ä¹‹å‰
+    ListInsert(L2,1,e);
+    cout<<"å°†eæ’å…¥åˆ°é“¾è¡¨2ç¬¬2ä¸ªå…ƒç´ ä¹‹å‰åçš„æ•°æ®åŸŸä¸ºï¼š";
+    showList(L2);cout<<endl;
+    
+    L1 = ListCombine(L1,L2);
+    cout<<"é“¾è¡¨1çš„æ•°æ®åŸŸä¸ºï¼š";
+    showList(L1);cout<<endl;
+    
 
-
-
+    
+}
 
 
 

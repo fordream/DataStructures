@@ -1,7 +1,8 @@
-//ÏßĞÔ±íµÄË³Ğò±íÊ¾¼°ÊµÏÖ 
+//çº¿æ€§è¡¨çš„é¡ºåºè¡¨ç¤ºåŠå®ç° 
 
 # include<iostream>
-
+# include<stdio.h> 
+#include<malloc.h>
 using namespace std;
 
 #define LIST_INIT_SIZE 100
@@ -10,37 +11,89 @@ using namespace std;
 #define OK 1
 #define ERROR -2
 
-typedef double ElemType;  //¶¨ÒåElemTypeÀàĞÍÎªdouble 
+typedef int ElemType;  //å®šä¹‰ElemTypeç±»å‹ä¸ºdouble 
 
-typedef struct{
-	ElemType *elem;      
-	int len;               //ÏßĞÔ±íµÄ³¤¶È 
-	int listsize;		   //ÏßĞÔ±í¿Õ¼ä´óĞ¡ 
-}SqList;                     //ÏßĞÔ±í½á¹¹ 
+typedef struct SqList{
+    ElemType *elem;      
+    int len;               //çº¿æ€§è¡¨çš„é•¿åº¦ 
+    int listsize;          //çº¿æ€§è¡¨ç©ºé—´å¤§å° 
+};                     //çº¿æ€§è¡¨ç»“æ„ 
 
 
+//ä¸»ä½“åŠŸèƒ½ 
+int InitList_Sq(SqList &L);                        //åˆå§‹åŒ– 
+int InsertList_Sq(SqList &L,int k,ElemType value);       //æ·»åŠ å…ƒç´ 
+int DeleteElemByValue(SqList &L,ElemType value);       //æŒ‰å€¼åˆ é™¤å…ƒç´  
+int DeleteElemByIndex(SqList &L,int i,ElemType &e);
+ElemType* CombineList1(SqList  &L1,SqList  &L2);
+SqList CombineList(SqList &La,SqList &Lb);
+
+//è¾…åŠ©å‡½æ•° 
+void swap(ElemType arr[],int i,int j); 
+void showElem(ElemType arr[], int  len);
+
+
+int main() {
+    SqList L1,L2;
+    InitList_Sq(L1);
+    InitList_Sq(L2);
+    L1.elem[0] = 10; L1.len++;
+    L1.elem[1] = -8; L1.len++;
+    L1.elem[2] = 32; L1.len++;
+    L1.elem[3] = 25; L1.len++;
+    L1.elem[4] = 7 ; L1.len++;
+    L1.elem[5] = -37; L1.len++;
+    L1.elem[6] = 0;  L1.len++;
+    L1.elem[7] = 20; L1.len++;
+    L1.elem[8] = 56; L1.len++;               
+    
+    printf("åŸå§‹åˆ—è¡¨ï¼š\n");
+    showElem(L1.elem,L1.len);
+    printf("åœ¨ç¬¬ä¸‰ä¸ªå…ƒç´ å‰æ·»åŠ å…ƒç´ 12ï¼š\n");
+    InsertList_Sq(L1,3,12) ;
+    showElem(L1.elem,L1.len);
+    printf("åˆ é™¤å…ƒç´ -37ï¼š\n");
+    DeleteElemByValue(L1,-37);
+    printf("L1ï¼š\n");
+    showElem(L1.elem,L1.len);
+    
+     L2.elem[0] = 52; L2. len++;
+    L2.elem[1] = -16; L2. len++;
+    L2.elem[2] = 35; L2. len++;
+    L2.elem[3] = -5; L2. len++;
+    L2.elem[4] = 7 ; L2. len++;
+    L2.elem[5] = 37; L2. len++;
+    L2.elem[6] = 99;  L2. len++;
+    printf("L2ï¼š\n");
+    showElem(L2.elem,L2.len);                    
+    ElemType *L;
+    L = CombineList1(L1,L2);
+    printf("L1+L2:");
+    showElem(L,L1. len+L2. len);
+    return 0;
+}
 
 /*
-ĞèÒªÊµÏÖµÄ¹¦ÄÜ
-1.³õÊ¼»¯
-2.²åÈëÔªËØ
-3.É¾³ıÔªËØ  °´ÖµÉ¾³ı  °´ÏÂ±êÉ¾³ı 
-4.ºÏ²¢±í 
+éœ€è¦å®ç°çš„åŠŸèƒ½
+1.åˆå§‹åŒ–
+2.æ’å…¥å…ƒç´ 
+3.åˆ é™¤å…ƒç´   æŒ‰å€¼åˆ é™¤  æŒ‰ä¸‹æ ‡åˆ é™¤ 
+4.åˆå¹¶è¡¨ 
 */ 
 
-//*******************¸¨Öúº¯Êı******************************
-//°´ÕÕ¹Ì¶¨¸ñÊ½´òÓ¡Êı×é
-void showElem(ElemType arr[], int length)
+//*******************è¾…åŠ©å‡½æ•°******************************
+//æŒ‰ç…§å›ºå®šæ ¼å¼æ‰“å°æ•°ç»„
+void showElem(ElemType arr[], int  len)
 {
     printf("Elem:[");
-    for(int i=0; i<length-2;i++)
+    for(int i=0; i<= len-2;i++)
         printf("%d,",arr[i] );                  
-        //ÓÃCÓïÑÔµÄ  Ò»¸öºÜ´óµÄ²»±ã£¬ %d  Ö»ÓĞµ±ÎÒElemTypeÊÇintÊ±²ÅĞĞ
-    printf("%d]\n",arr[length-1] );
+        //ç”¨Cè¯­è¨€çš„  ä¸€ä¸ªå¾ˆå¤§çš„ä¸ä¾¿ï¼Œ %d  åªæœ‰å½“æˆ‘ElemTypeæ˜¯intæ—¶æ‰è¡Œ
+    printf("%d]\n",arr[ len-1] );
 
 }
 
-//½»»»Êı×éÔªËØÎ»ÖÃ
+//äº¤æ¢æ•°ç»„å…ƒç´ ä½ç½®
 
 void swap(ElemType arr[],int i,int j)
 {
@@ -51,15 +104,15 @@ void swap(ElemType arr[],int i,int j)
 
 }
 
-//Ã°ÅİÅÅĞò
+//å†’æ³¡æ’åº
 void bubbleSort(SqList &L)
 {
     int temp = 1;
-        for(int i = 1; i < L.length && temp==1 ;i++){
+        for(int i = 1; i < L.len && temp==1 ;i++){
            
             temp = 0;
            
-            for(int j = 0; j <L.length-i; j++){
+            for(int j = 0; j <L.len-i; j++){
                
                 if(L.elem[j]>L.elem[j+1]){
                    
@@ -70,102 +123,102 @@ void bubbleSort(SqList &L)
             }
         }
 }
-//*******************¸¨Öúº¯Êı******************************
+//*******************è¾…åŠ©å‡½æ•°******************************
 
-//1.³õÊ¼»¯  int InitList_Sq(SqList &L)
+//1.åˆå§‹åŒ–  int InitList_Sq(SqList &L)
 int InitList_Sq(SqList &L)
 {
-	 	L.elem = (ElemType *)malloc(LIST_INIT_SIZE*sizeof(ElemType));
-	 	if(!L.elem) return OVERFLOW;
-	 	
-	 	L.len = 0;
-	 	L.listsize = LIST_INIT_SIZE;
-	 	return OK;
+        L.elem = (ElemType *)malloc(LIST_INIT_SIZE * sizeof( ElemType ));
+        if(!L.elem) exit(0);
+        
+        L.len = 0;
+        L.listsize = LIST_INIT_SIZE;
+        return OK;
 }
 
-//2.²åÈëÔªËØ int InsertList_Sq(SqList &L,int i,ElemType e);
+//2.æ’å…¥å…ƒç´  int InsertList_Sq(SqList &L,int i,ElemType e);
 int InsertList_Sq(SqList &L,int i,ElemType e)
 {
-	//LÎªĞèÒª²åÈëÔªËØµÄ±í £¬iÎª²åÈëÔÚµÚi¸öÔªËØÖ®Ç°£¬eÎªĞèÒª²åÈëµÄÔªËØ
-	//Ê×ÏÈ¼ì²éiµÄºÏ·¨ĞÔ
-	if( i<1 || i>L.len )return ERROR;
-	//ÔÙ¼ì²élist¿Õ¼äÊÇ·ñ¹»  ²»¹»Ôò·ÖÅä 
-	if(L.len>=L.listsize)
-	{
-		ElemType *temp;
-		temp = (ElemType *)realloc(L.elem,(LIST_INIT_SIZE+LISTINCREASEMENT)*sizeof(ElemType));
-		if(!temp) return OVERFLOW;
-		L.elem = temp;
-		L.listsize+=LISTINCREASEMENT;   
-	}	
-	ElemType *p,*q;
-	q = &(L.elem[i-1]);  //ĞèÒª²åÈëÔªËØµÄÎ»ÖÃ
-	for(p = &(L.elem[L.len-1]);p>=q;p--) *(p+1) = *p; //ÔªËØ´ÓºóÍùÇ°ÒÀ´ÎºóÒÆ 
- 	*q = e;				//¸³Öµ 
- 	L.len++;            //±í³¤¼Ó1 
- 	
- 	return OK;
-	
+    //Lä¸ºéœ€è¦æ’å…¥å…ƒç´ çš„è¡¨ ï¼Œiä¸ºæ’å…¥åœ¨ç¬¬iä¸ªå…ƒç´ ä¹‹å‰ï¼Œeä¸ºéœ€è¦æ’å…¥çš„å…ƒç´ 
+    //é¦–å…ˆæ£€æŸ¥içš„åˆæ³•æ€§
+    if( i<1 || i>L.len )return ERROR;
+    //å†æ£€æŸ¥listç©ºé—´æ˜¯å¦å¤Ÿ  ä¸å¤Ÿåˆ™åˆ†é… 
+    if(L.len>=L.listsize)
+    {
+        ElemType *temp;
+        temp = (ElemType *)realloc(L.elem,(LIST_INIT_SIZE+LISTINCREASEMENT)*sizeof(ElemType));
+        if(!temp) return OVERFLOW;
+        L.elem = temp;
+        L.listsize+=LISTINCREASEMENT;   
+    }   
+    ElemType *p,*q;
+    q = &(L.elem[i-1]);  //éœ€è¦æ’å…¥å…ƒç´ çš„ä½ç½®
+    for(p = &(L.elem[L.len-1]);p>=q;p--) *(p+1) = *p; //å…ƒç´ ä»åå¾€å‰ä¾æ¬¡åç§» 
+    *q = e;             //èµ‹å€¼ 
+    L.len++;            //è¡¨é•¿åŠ 1 
+    
+    return OK;
+    
 } 
-//3.É¾³ıÔªËØ
+//3.åˆ é™¤å…ƒç´ 
 /*
-1¡¢°´ÏÂ±ê int DeleteElemByIndex(SqList &L,int i,ElemType &e) 
+1ã€æŒ‰ä¸‹æ ‡ int DeleteElemByIndex(SqList &L,int i,ElemType &e) 
 
-2¡¢°´Öµ   int DeleteElemByValue(SqList &L,ElemType value) 
+2ã€æŒ‰å€¼   int DeleteElemByValue(SqList &L,ElemType value) 
 */
 int DeleteElemByIndex(SqList &L,int i,ElemType &e)
 {
-	if( i<1 || i>L.len) return ERROR;
-	ElemType *p;
-	p = &(L.elem[i-1]);
-	e = *p;
-	for(;p<= &(L.elem[L.len-1]);p++) *p = *(p+1);
-	cout<<"É¾³ı³É¹¦!"<<endl;
-	L.len--;
-	return OK;
+    if( i<1 || i>L.len) return ERROR;
+    ElemType *p;
+    p = &(L.elem[i-1]);
+    e = *p;
+    for(;p<= &(L.elem[L.len-1]);p++) *p = *(p+1);
+    cout<<"åˆ é™¤æˆåŠŸ!"<<endl;
+    L.len--;
+    return OK;
 } 
 
 
 int DeleteElemByValue(SqList &L,ElemType value)
 {
-    for(int i =0; i < L.length - 1; i++)
+    for(int i =0; i < L.len - 1; i++)
     {
         if(L.elem[i] == value)
         {
             ElemType *p ,*q;
             q = &L.elem[i];
-            for( p=&(L.elem[L.length-1]);q<=p;++q) *q = *(q+1);
+            for( p=&(L.elem[L.len-1]);q<=p;++q) *q = *(q+1);
            
-            L.length--;
+            L.len--;
             return OK;
         }
         else
         {
-            printf("ÕÒ²»µ½¸ÃÔªËØ\n");
+            printf("æ‰¾ä¸åˆ°è¯¥å…ƒç´ \n");
             return ERROR;
          }
     }
 }
 
- /*4.ºÏ²¢±í ElemType CombineList1(SqList &L1,SqList &L2) 
- 			ElemType CombineList(SqList &L1,SqList &L2)
+ /*4.åˆå¹¶è¡¨ ElemType CombineList1(SqList &L1,SqList &L2) 
+            ElemType CombineList(SqList &L1,SqList &L2)
  */ 
- //·½Ê½1.È«²¿Èû½øÒ»¸ö´óµÄÁ´±íºó¶ÔÁ´±í½øĞĞÅÅĞò ´ËËã·¨¸´ÔÓ¶ÈÎªO(L1.len+L2.len) 
+ //æ–¹å¼1.å…¨éƒ¨å¡è¿›ä¸€ä¸ªå¤§çš„é“¾è¡¨åå¯¹é“¾è¡¨è¿›è¡Œæ’åº æ­¤ç®—æ³•å¤æ‚åº¦ä¸ºO(L1.len+L2.len) 
  ElemType* CombineList1(SqList  &L1,SqList  &L2)
 {
    //bubbleSort(L1);
-    //showElem(L1.elem,L1.length);
+    //showElem(L1.elem,L1. len);
    // bubbleSort(L2);
-    //showElem(L2.elem,L2.length);
+    //showElem(L2.elem,L2. len);
     SqList L;
-    L.length = L1.length+L2.length;
-    L.elem = (ElemType*)malloc(L.length*sizeof(ElemType));
-    for(int i=0;i<L1.length;i++)
+    L.len = L1.len+L2.len;
+    L.elem = (ElemType*)malloc(L.len*sizeof(ElemType));
+    for(int i=0;i<L1.len;i++)
     {
         L.elem[i] = L1.elem[i];
     }  
     int i=0;
-    for(int j = L1.length ;j<L.length&&i<L2.length ;j++ )
+    for(int j = L1.len ;j<L.len&&i<L2.len ;j++ )
     {
         L.elem[j] = L2.elem[i];
         i++;
@@ -173,26 +226,26 @@ int DeleteElemByValue(SqList &L,ElemType value)
     bubbleSort(L);
     return L.elem;
 }
-//·½Ê½2. °´´óĞ¡·Å½øÒ»¸ö
+//æ–¹å¼2. æŒ‰å¤§å°æ”¾è¿›ä¸€ä¸ª
  SqList CombineList(SqList &La,SqList &Lb)
  {
- 	ElemType *pa,*pb,*pc,*pa_last,*pb_last;
- 	bubbleSort(La);
- 	bubbleSort(Lb);
- 	SqList Lc;
- 	Lc.listsize = Lc.len = La.len + Lb.len;
- 	pc=Lc.elem = (ElemType *)malloc(Lc.listsize*sizeof(ElemType));
- 	if(!pc) return OVERFLOW;
- 	pa = La.elem;     pa_last = La.elem + La.len - 1;
- 	pb = Lb.elem;	  pb_last = Lb.elem + Lb.len - 1;
- 	while(pa<=pa_last && pb<=pb_last)
- 	{
-	 	if(*pa<=*pb) {*pc++ = *pa++;}
-	 	else {*pc++ = *pb++	}
- 	}
- 	while(pa<pa_last) *pc++ = *pa++;
- 	while(pb<pb_last) *pc++ = *pb++;
- 	
- 	return Lc;
+    ElemType *pa,*pb,*pc,*pa_last,*pb_last;
+    bubbleSort(La);
+    bubbleSort(Lb);
+    SqList Lc;
+    Lc.listsize = Lc.len = La.len + Lb.len;
+    pc=Lc.elem = (ElemType *)malloc(Lc.listsize*sizeof(ElemType));
+    pa = La.elem;     pa_last = La.elem + La.len - 1;
+    pb = Lb.elem;     pb_last = Lb.elem + Lb.len - 1;
+    while(pa<=pa_last && pb<=pb_last)
+    {
+        if(*pa<=*pb) {*pc++ = *pa++;}
+        else {*pc++ = *pb++ ;}
+    }
+    while(pa<pa_last) *pc++ = *pa++;
+    while(pb<pb_last) *pc++ = *pb++;
+    
+    return Lc;
  } 
+ 
 
